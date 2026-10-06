@@ -79,6 +79,23 @@ nav a.on{box-shadow:inset 0 -2px 0 #a3b86c}
 .xc .side{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:6px}.xc ul{margin-top:14px}
 .xc .tg:before{content:"Show description ▾";font-size:13px}.xc[open] .tg:before{content:"Hide description ▴"}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}.g2 .card h3{margin-bottom:6px}.g2 ul{font-size:15px}
+.credential-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:18px;margin-bottom:24px}
+.credential-card{padding:24px;border-top:3px solid var(--a);background:var(--c)}
+.credential-card h3{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--l);color:var(--a);font-size:18px}
+.credential-card ul{margin:0;padding-left:20px;font-size:15px;line-height:1.6}
+.credential-card li{margin:10px 0;padding-left:3px}
+.credential-card li::marker{color:var(--a)}
+.teaching-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin:0 0 28px}
+.teaching-card{background:var(--c);border:1px solid var(--l);border-top:3px solid var(--a);border-radius:16px;padding:20px}
+.teaching-card h3{font-size:17px;line-height:1.35;color:var(--a);margin:0 0 8px}
+.teaching-focus{background:var(--t);border-radius:14px;padding:20px 24px;margin:0 0 32px}
+.teaching-focus h3{margin:0 0 8px;color:var(--a)}.teaching-focus ul{margin:0;padding-left:20px}
+.course-table-wrap{overflow-x:auto;border:1px solid var(--l);border-radius:14px;background:var(--c);margin-bottom:24px}
+.course-table{width:100%;min-width:720px;border-collapse:collapse;text-align:left;font-size:14px;line-height:1.45}
+.course-table th,.course-table td{padding:12px 14px;border-bottom:1px solid var(--l);vertical-align:top}
+.course-table th{background:var(--t);color:var(--fg);font-size:12px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.course-table tbody tr:nth-child(even){background:var(--t)}
+.course-table tbody tr:last-child td{border-bottom:0}.course-table td:nth-child(1),.course-table td:nth-child(2),.course-table td:nth-child(5),.course-table td:nth-child(6){white-space:nowrap}
 @media(max-width:700px){.xc>summary,.xh{flex-direction:column;gap:8px}.xc .side{align-items:flex-start}}
 .ab{display:grid;grid-template-columns:280px 1fr;gap:40px;align-items:start}.ab img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:60% 30%;border-radius:20px}@media(max-width:700px){.ab{grid-template-columns:1fr}.ab img{aspect-ratio:1;max-width:320px}}#tb{display:none}#lg{position:fixed;inset:0;background:#000a;display:none;z-index:11;align-items:center;justify-content:center;padding:20px}#lg.s{display:flex}#lf{background:var(--bg);color:var(--fg);border-radius:16px;padding:24px;width:min(380px,100%);display:grid;gap:12px}#ft a{color:inherit;opacity:.6}.ab-copy{max-width:66ch}.ab-copy p{font-size:17px;line-height:1.8;margin:0 0 1.15em}.ab-copy p:last-child{margin-bottom:0}</style></head><body>
 <nav><div class="w"><b>Jesse Stallsworth</b><div id="nv"></div></div></nav>
@@ -140,27 +157,47 @@ const BIO=[
 const ad=k=>ed?`<p><button class="x" data-add="${k}">+ Add</button></p>`:"";
 const dl=(k,i)=>ed?`<br><button class="x" data-del="${k}.${i}">Remove</button>`:"";
 const rowH=k=>(x,i)=>`<div class="row"><div class="when">${t(k+"."+i+".d",x.d)}</div><div><h3>${t(k+"."+i+".r",x.r)}</h3><div class="m">${t(k+"."+i+".o",x.o)}</div><ul>${x.b.map((b,j)=>`<li>${t(k+"."+i+".b."+j,b)}</li>`).join("")}</ul>${dl(k,i)}</div></div>`;
-const list=k=>`<ul>${D[k].map((v,i)=>`<li>${t(k+"."+i,v)}${ed?` <button class="x" data-del="${k}.${i}">×</button>`:""}</li>`).join("")}</ul>${ad(k)}`;
+const list=k=>`<ul>${(k==="lead"||k==="teach"?D[k].map((v,i)=>({v,i,start:+(v.match(/(\d{4})/)||[])[1]||0})).sort((a,b)=>b.start-a.start||a.i-b.i):D[k].map((v,i)=>({v,i}))).map(({v,i})=>{if(k!=="lead"&&k!=="teach")return `<li>${t(k+"."+i,v)}${ed?` <button class="x" data-del="${k}.${i}">×</button>`:""}</li>`;const role=k==="lead"?(v.match(/^(Chair, Vice-Chair, Past Chair|Industry Expert|Co-Chair|Member|Mentor)(,)(.*)$/)||[]):(v.match(/^([^,]+)(,)(.*)$/)||[]);return `<li><span data-p="${k}.${i}">${role.length?`<b>${E(role[1])}</b>${E(role[2]+role[3])}`:`<b>${E(v)}</b>`}</span>${ed?` <button class="x" data-del="${k}.${i}">×</button>`:""}</li>`}).join("")}</ul>${ad(k)}`;
 const ym=s=>{const m=s.match(/(\d{2})\/(\d{4})/);if(m)return[+m[2],+m[1]];const y=s.match(/(\d{4})/);return y?[+y[1],1]:null};
 const kk=d=>{const a=ym(d.split(/[–—-]/)[0]);return a?a[0]*12+a[1]:0};
 const dur=d=>{const p=d.split(/[–—-]/);if(p.length<2)return"";const a=ym(p[0]),n0=new Date(),b=/present/i.test(p[1])?[n0.getFullYear(),n0.getMonth()+1]:ym(p[1]);if(!a||!b)return"";const n=(b[0]-a[0])*12+b[1]-a[1];if(n<1)return"";const y=Math.floor(n/12),m=n%12;return[y?y+" yr"+(y>1?"s":""):"",m?m+" mo":""].filter(Boolean).join(" ")};
+const TEACHING_COURSES=[
+{y:"2025",s:"Fall",c:"UK 101: Academic Orientation",r:"Lead Instructor",h:1,n:30},
+{y:"2024",s:"Fall",c:"UK 101: Academic Orientation",r:"Lead Instructor",h:1,n:29},
+{y:"2023",s:"Fall",c:"NUR 101: Academic Orientation and Introduction to Nursing",r:"Co-Instructor",h:1,n:39},
+{y:"2022",s:"Fall",c:"NUR 101: Academic Orientation and Introduction to Nursing",r:"Co-Instructor",h:1,n:45},
+{y:"2021",s:"Fall",c:"NUR 101: Academic Orientation and Introduction to Nursing",r:"Co-Instructor",h:1,n:41},
+{y:"2021",s:"Spring",c:"NUR 520: Fundamentals of Online Teaching",r:"Co-Instructor / Course Designer",h:3,n:6},
+{y:"2017",s:"Fall",c:"UK 101: Academic Orientation",r:"Peer Instructor",h:1,n:35},
+{y:"2017",s:"Spring",c:"UK 201: Academic Orientation for Transfers",r:"Peer Instructor",h:2,n:35},
+{y:"2016",s:"Fall",c:"UK 101: Academic Orientation",r:"Peer Instructor",h:1,n:25},
+{y:"2016",s:"Summer",c:"UK 101: Academic Orientation",r:"Peer Instructor",h:1,n:20},
+{y:"2016",s:"Spring",c:"UK 101: Academic Orientation",r:"Peer Instructor",h:1,n:40}
+];
+const TEACHING_ROLES=[
+{r:"UK 101 Lead Instructor and NUR 101 Co-Instructor",d:"2021–2025",o:"University of Kentucky"},
+{r:"NUR 520 Co-Instructor and Course Designer",d:"Spring 2021",o:"Fundamentals of Online Teaching"},
+{r:"Post-Baccalaureate Teaching Assistant",d:"August 2016–May 2017",o:"University of Kentucky Student and Academic Life"},
+{r:"UK 101/201 Peer Instructor",d:"2016–2017",o:"University of Kentucky"}
+];
 const P={
 "":()=>`<section class="hx"><div class="w hg"><div><div class="eyebrow">${t("role",D.role)} · ${t("loc",D.loc)}</div><span class="pill">● ${t("avail",D.avail??"Open to full-time roles and consulting")}</span><h1>${t("name",D.name)}</h1><p class="lead">${t("sum",D.sum)}</p><p><a class="btn" href="#/projects">View projects</a> <a class="btn o" href="#/contact">Get in touch</a></p></div><div class="ph"><img src="${PH}" alt="Portrait of Jesse B. Stallsworth"></div></div></section>
 <section class="sb"><div class="w sg">${D.stats.map((s,i)=>`<div><b>${t("stats."+i+".0",s[0])}</b><span>${t("stats."+i+".1",s[1])}</span></div>`).join("")}</div></section>
 <div class="w"><h2>Core skills</h2><div class="chips">${D.skills.map((s,i)=>`<span>${t("skills."+i,s)}</span>`).join("")}</div></div>`,
 about:()=>`<h2>About Me</h2><div class="ab"><img src="${PH}" alt="Portrait of Jesse B. Stallsworth"><div class="ab-copy">${BIO.map(p=>`<p>${E(p)}</p>`).join("")}<p><a class="btn" href="#/experience">View experience</a> <a class="btn o" href="#/contact">Get in touch</a></p></div></div><h2>My Core Values</h2><div class="values">${D.values.map((v,i)=>`<article class="value"><h3>${t("values."+i+".t",v.t)}</h3><p>${t("values."+i+".d",v.d)}</p>${i===0?`<ul class="values-extra"><li>Treat people right</li><li>Be honest</li><li>Work hard</li></ul>`:""}</article>`).join("")}</div><h2>Interests</h2><div class="chips">${D.ints.map((v,i)=>`<span>${t("ints."+i,v)}${ed?` <button class="x" data-del="ints.${i}">×</button>`:""}</span>`).join("")}</div>${ad("ints")}`,
-experience:()=>{const items=[...D.exp.map((x,i)=>({...x,k:"exp",i})),...D.edu.map((x,i)=>({...x,k:"edu",i}))].sort((a,b)=>kk(b.d)-kk(a.d));
+experience:()=>{const items=D.exp.map((x,i)=>({...x,k:"exp",i})).sort((a,b)=>kk(b.d)-kk(a.d));
 const card=(k,x,i)=>{const du=dur(x.d),hd=`<div><h3>${t(k+"."+i+".r",x.r)}</h3><div class="m">${t(k+"."+i+".o",x.o)}</div></div><div class="side"><span class="when">${t(k+"."+i+".d",x.d)}</span>${du?`<span class="badge">${du}</span>`:""}${ed?"":`<span class="tg m"></span>`}</div>`,ul=`<ul>${x.b.map((b,j)=>`<li>${t(k+"."+i+".b."+j,b)}</li>`).join("")}</ul>${dl(k,i)}`;
 return ed?`<div class="xc" id="${k}${i}"><div class="xh">${hd}</div>${ul}</div>`:`<details class="xc" id="${k}${i}"${k=="exp"&&i==0?" open":""}><summary>${hd}</summary>${ul}</details>`};
 return `<h2>Career timeline</h2><ol class="tl">${items.map(x=>`<li class="${x.k}"><span class="dot"></span><div class="tm">${E(x.d)}</div><h3>${E(x.r)}</h3><div class="m">${E(x.o)}</div><a href="#" data-go="${x.k}.${x.i}">Read more ↓</a></li>`).join("")}</ol>
 <h2>Work history</h2>${D.exp.map((x,i)=>card("exp",x,i)).join("")}${ad("exp")}<h2>Education</h2>${D.edu.map((x,i)=>card("edu",x,i)).join("")}
-<h2>Credentials and Recognition</h2><div class="g2"><div class="card"><h3>Certifications</h3>${list("certs")}</div><div class="card"><h3>Honors and awards</h3>${list("awards")}</div><div class="card"><h3>Teaching</h3>${list("teach")}</div><div class="card"><h3>Leadership and service</h3>${list("lead")}</div></div>`},
+<h2>Credentials and Recognition</h2><div class="credential-grid"><section class="card credential-card"><h3>Certifications <span class="badge">${D.certs.length}</span></h3>${list("certs")}</section><section class="card credential-card"><h3>Honors and Awards <span class="badge">${D.awards.length}</span></h3>${list("awards")}</section><section class="card credential-card"><h3>Leadership and Service <span class="badge">${D.lead.length}</span></h3>${list("lead")}</section></div>`},
+teaching:()=>`<h2>Teaching Experience</h2><div class="teaching-cards">${TEACHING_ROLES.map(x=>`<article class="teaching-card"><h3><b>${E(x.r)}</b></h3><p>${E(x.d)} · ${E(x.o)}</p></article>`).join("")}</div><section class="teaching-focus"><h3>Teaching Focus</h3><ul><li>Supported first-year students as they transitioned from high school to college through UK 101, covering time management, academic expectations, digital literacy, and stress management.</li><li>Mentored pre-nursing students and introduced them to nursing pathways and professional opportunities.</li><li>Created an inclusive classroom environment that encouraged dialogue and active student participation.</li><li>Designed and co-taught online instruction, including NUR 520: Fundamentals of Online Teaching.</li></ul></section><h2>Academic Engagement</h2><div class="course-table-wrap" role="region" aria-label="Academic engagement course table" tabindex="0"><table class="course-table"><thead><tr><th>Year</th><th>Term</th><th>Course</th><th>Teaching Role</th><th>Credit Hours</th><th>Students</th></tr></thead><tbody>${TEACHING_COURSES.map(x=>`<tr><td>${x.y}</td><td>${x.s}</td><td>${x.c}</td><td>${x.r}</td><td>${x.h}</td><td>${x.n}</td></tr>`).join("")}</tbody></table></div>`,
 projects:()=>{const li=(g,i)=>g.b.map((b,j)=>`<li>${t("pubs."+i+".b."+j,b)}${g.u?(ed?` <small class="m">link: ${t("pubs."+i+".u."+j,g.u[j]||"")}</small>`:g.u[j]?` <a href="${E(g.u[j])}" target="_blank" rel="noopener">Listen ↗</a>`:""):""}</li>`).join("");
 return `<h2>Projects and examples</h2><div class="pg">${D.proj.map((p,i)=>`<div class="pc"><div class="ic">${t("proj."+i+".g",p.g||GL[i]||"◆")}</div><div><h3>${t("proj."+i+".t",p.t)}</h3><p class="m">${t("proj."+i+".d",p.d)}</p>${ed?`<p>Link: ${t("proj."+i+".l",p.l)}</p>`:p.l?`<a href="${E(p.l)}" target="_blank" rel="noopener">View project →</a>`:""}${dl("proj",i)}</div></div>`).join("")}</div>${ad("proj")}<h2 class="up">Full list of projects and presentations</h2><div class="al">${D.pubs.map((g,i)=>ed?`<div class="row"><div class="when">${t("pubs."+i+".t",g.t)}</div><div><ul>${li(g,i)}</ul>${dl("pubs",i)}</div></div>`:`<details><summary><span>${E(g.t)}</span><span class="badge">${g.b.length}</span></summary><ul>${li(g,i)}</ul></details>`).join("")}</div>${ad("pubs")}`},
 accomplishments:()=>`<h2>Featured Accomplishments</h2><p class="m">${t("accIntro",D.accIntro||"")}</p>${D.acc.length?`<div class="grid">${D.acc.map((a,i)=>`<div class="card"><div class="metric">${t("acc."+i+".m",a.m)}</div><h3>${t("acc."+i+".t",a.t)}</h3><p class="m">${t("acc."+i+".d",a.d)}</p>${ed?`<p>Link: ${t("acc."+i+".l",a.l)}</p>`:a.l?`<a href="${E(a.l)}" target="_blank" rel="noopener">Learn more →</a>`:""}${dl("acc",i)}</div>`).join("")}</div>`:ed?"":`<p class="m">Coming soon.</p>`}${ad("acc")}`,
 testimonials:()=>`<h2>Testimonials</h2><div class="grid">${D.tests.map((x,i)=>`<div class="card"><blockquote>“${t("tests."+i+".q",x.q)}”</blockquote><p><b>${t("tests."+i+".n",x.n)}</b><br><span class="m">${t("tests."+i+".r",x.r)}</span></p>${dl("tests",i)}</div>`).join("")}</div>${ad("tests")}`,
 contact:()=>`<h2>Contact</h2><p class="m">Available for full-time roles and consulting. Email: ${t("email",D.email)}</p><form id="fm"><input name="n" placeholder="Your name" required><input name="e" type="email" placeholder="Your email" required><textarea name="m" rows="5" placeholder="How can I help?" required></textarea><button class="btn">Send message</button></form><h2 style="font-size:20px">Elsewhere</h2><p>${D.links.map((l,i)=>ed?`${t("links."+i+".0",l[0])}: ${t("links."+i+".1",l[1])}<br>`:`<a href="${E(l[1])}" target="_blank" rel="noopener">${E(l[0])}</a> &nbsp; `).join("")}</p>`};
-const NAV=[["","Home"],["about","About Me"],["experience","Experience"],["projects","Projects"],["accomplishments","Featured Accomplishments"],["testimonials","Testimonials"],["contact","Contact"]];
+const NAV=[["","Home"],["about","About Me"],["experience","Experience"],["teaching","Teaching Experience"],["projects","Projects"],["accomplishments","Featured Accomplishments"],["testimonials","Testimonials"],["contact","Contact"]];
 function R(){D.acc=D.acc||[];D.ints=D.ints||structuredClone(DEF.ints);D.about=D.about??DEF.about??D.sum;const h=location.hash.replace("#/","").replace("#","");const pg=P[h]?h:"";
 $("#nv").innerHTML=NAV.map(n=>`<a href="#/${n[0]}" class="${n[0]==pg?"on":""}">${n[1]}</a>`).join("")+`<a href="#" id="th" aria-label="Toggle theme">◐</a>`;
 $("#app").innerHTML=pg?'<div class="w">'+P[pg]()+'</div>':P[pg]();$("#ft").innerHTML=`© ${new Date().getFullYear()} ${E(D.name)} · <a href="#" id="adm">Admin</a>`;
